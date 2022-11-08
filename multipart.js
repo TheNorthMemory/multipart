@@ -9,7 +9,6 @@ const CRLF = Buffer.from('\r\n');
 /**
  * Simple and lite of `multipart/form-data` implementation, most similar to `form-data`.
  *
- * @since v0.7.0
  * @example
  * // buffer style(Synchronous)
  * (new Multipart())
@@ -26,7 +25,7 @@ const CRLF = Buffer.from('\r\n');
  */
 class Multipart extends Readable {
   /**
-   * Create a `multipart/form-data` buffer container for the media(image/video) file uploading.
+   * Create a `multipart/form-data` buffer container for the media file uploading.
    *
    * @constructor
    */
@@ -46,9 +45,14 @@ class Multipart extends Readable {
           jpg: 'image/jpeg',
           jpe: 'image/jpeg',
           jpeg: 'image/jpeg',
+          webp: 'image/webp',
           mp4: 'video/mp4',
           mpeg: 'video/mpeg',
           json: 'application/json',
+          js: 'application/javascript',
+          htm: 'text/html',
+          html: 'text/html',
+          css: 'text/css',
         },
         configurable: false,
         enumerable: false,
@@ -58,50 +62,10 @@ class Multipart extends Readable {
       /**
        * @readonly
        * @memberof Multipart#
-       * @prop {Buffer} dashDash - Double `dash` buffer
-       * @deprecated v0.8.0 - Only for compatible, use the literal `Buffer.from('--')` Buffer instead
-       */
-      dashDash: {
-        value: HYPHENS,
-        configurable: false,
-        enumerable: false,
-        writable: false,
-      },
-
-      /**
-       * @readonly
-       * @memberof Multipart#
        * @prop {Buffer} boundary - The boundary buffer.
        */
       boundary: {
-        /* eslint-disable-next-line no-bitwise */
-        value: Buffer.from(`${'0'.repeat(24).replace(/0/g, () => Math.random() * 10 | 0).padStart(50, '-')}`),
-        configurable: false,
-        enumerable: false,
-        writable: false,
-      },
-
-      /**
-       * @readonly
-       * @memberof Multipart#
-       * @prop {Buffer} EMPTY - An empty buffer
-       * @deprecated v0.8.0 - Only for compatible, use the literal `Buffer.from([])` Buffer instead
-       */
-      EMPTY: {
-        value: EMPTY,
-        configurable: false,
-        enumerable: false,
-        writable: false,
-      },
-
-      /**
-       * @readonly
-       * @memberof Multipart#
-       * @prop {Buffer} CRLF - The `CRLF` characters buffer
-       * @deprecated v0.8.0 - Only for compatible, use the literal `Buffer.from('\r\n')` Buffer instead
-       */
-      CRLF: {
-        value: CRLF,
+        value: Buffer.from((Date.now() + `${Math.random()}`.substring(2, 13)).padStart(50, '-')),
         configurable: false,
         enumerable: false,
         writable: false,
@@ -327,13 +291,6 @@ class Multipart extends Readable {
   values() { return this.indices.map(([, index]) => this.data[index])[Symbol.iterator](); }
 
   /**
-   * The WeChatPay APIv3' specific, the `meta` JSON
-   *
-   * @return {object<string, string>|null} - The `meta{filename,sha1}` information.
-   */
-  toJSON() { return this.has('meta') ? JSON.parse(this.get('meta')) : null; }
-
-  /**
    * alias of {@link Multipart#entries}
    * @return {Iterator<Array<EntryTuple<string|undefined, Buffer|ReadStream>>>} - An Array Iterator key/value pairs.
    */
@@ -360,7 +317,7 @@ class Multipart extends Readable {
   /**
    * Pushing {@link Multipart#data} into the readable BufferList
    *
-   * @param {boolean} [end = true] - End the writer when the reader ends. Default: `true`. Available {@since v0.8.0}
+   * @param {boolean} [end = true] - End the writer when the reader ends. Default: `true`.
    *
    * @returns {Promise<this>} - The Multipart instance
    */
@@ -397,20 +354,5 @@ class Multipart extends Readable {
   }
 }
 
-let FormData;
-try {
-  /* eslint-disable-next-line global-require, import/no-unresolved, import/no-extraneous-dependencies */
-  FormData = require('form-data');
-  /* @see [issue#396 `Object.prototype.toString.call(form)`]{@link https://github.com/form-data/form-data/issues/396} */
-  if (!Reflect.has(FormData, Symbol.toStringTag)) {
-    Reflect.set(FormData.prototype, Symbol.toStringTag, 'FormData');
-    Reflect.set(FormData, Symbol.toStringTag, FormData.prototype[Symbol.toStringTag]);
-  }
-} catch (e) {
-  /* eslint max-classes-per-file: ["error", 2] */
-  FormData = class extends Multipart {};
-}
-
 module.exports = Multipart;
 module.exports.default = Multipart;
-module.exports.FormData = FormData;

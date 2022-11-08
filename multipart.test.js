@@ -6,7 +6,7 @@ const should = require('should');
 
 const Multipart = require('./multipart');
 
-describe('lib/multipart', () => {
+describe('multipart.js', () => {
   it('default should be class `Multipart`', () => {
     should(Multipart).be.a.Function().and.have.property('name', 'Multipart');
   });
@@ -22,7 +22,7 @@ describe('lib/multipart', () => {
       const form = new Multipart();
 
       form.mimeTypes.should.be.Object()
-        .and.have.keys('bmp', 'gif', 'png', 'jpg', 'jpe', 'jpeg', 'mp4', 'mpeg', 'json');
+        .and.have.keys('bmp', 'gif', 'png', 'jpg', 'jpe', 'jpeg', 'webp', 'mp4', 'mpeg', 'json', 'js', 'htm', 'html', 'css');
 
       should(delete form.mimeTypes).be.False();
 
@@ -31,22 +31,6 @@ describe('lib/multipart', () => {
         .and.have.keys('any')
         .and.not.have.keys('bmp', 'json')
         .and.have.property('any', 'mock');
-    });
-
-    it('The `dashDash` Buffer property should be there and cannot be deleted/modified', () => {
-      should(Multipart.dashDash).be.Undefined();
-
-      const form = new Multipart();
-
-      form.dashDash.should.not.Undefined().and.be.instanceOf(Buffer).and.have.length(2);
-
-      should(delete form.dashDash).be.False();
-      Buffer.compare(form.dashDash, Buffer.from('--')).should.be.equal(0);
-
-      const buf = Buffer.alloc(2);
-
-      form.dashDash = buf;
-      Buffer.compare(form.dashDash, buf).should.be.equal(1);
     });
 
     it('The `boundary` Buffer property should be there and cannot be deleted/modified', () => {
@@ -64,42 +48,6 @@ describe('lib/multipart', () => {
 
       form.boundary = buf;
       Buffer.compare(form.boundary, buf).should.be.equal(1);
-    });
-
-    it('The `EMPTY` Buffer property should be there and cannot be deleted/modified', () => {
-      should(Multipart.EMPTY).be.Undefined();
-
-      const form = new Multipart();
-
-      form.EMPTY.should.not.Undefined()
-        .and.be.instanceOf(Buffer)
-        .and.have.length(0);
-
-      should(delete form.EMPTY).be.False();
-
-      const buf = Buffer.alloc(0);
-      Buffer.compare(form.EMPTY, buf).should.be.equal(0);
-
-      form.EMPTY = buf;
-      Buffer.compare(form.EMPTY, buf).should.be.equal(0);
-    });
-
-    it('The `CRLF` Buffer property should be there and cannot be deleted/modified', () => {
-      should(Multipart.CRLF).be.Undefined();
-
-      const form = new Multipart();
-
-      form.CRLF.should.not.Undefined()
-        .and.be.instanceOf(Buffer)
-        .and.have.length(2);
-
-      should(delete form.CRLF).be.False();
-      Buffer.compare(form.CRLF, Buffer.from('\r\n')).should.be.equal(0);
-
-      const buf = Buffer.alloc(2);
-
-      form.CRLF = buf;
-      Buffer.compare(form.CRLF, buf).should.be.equal(1);
     });
 
     it('The `data` property should be instanceOf Array and cannot deleted', () => {
@@ -174,7 +122,7 @@ describe('lib/multipart', () => {
 
       form.appendMimeTypes({ any: 'mock' }).should.be.instanceOf(Multipart);
       form.mimeTypes.should.be.instanceOf(Object)
-        .and.have.keys('bmp', 'gif', 'png', 'jpg', 'jpe', 'jpeg', 'mp4', 'mpeg', 'json', 'any')
+        .and.have.keys('bmp', 'gif', 'png', 'jpg', 'jpe', 'jpeg', 'webp', 'mp4', 'mpeg', 'json', 'js', 'htm', 'html', 'css', 'any')
         .and.have.property('any', 'mock');
     });
   });
@@ -446,20 +394,6 @@ describe('lib/multipart', () => {
     });
   });
 
-  describe('Multipart::toJSON', () => {
-    it('Method `toJSON()` should returns an Object or null while there wasnot `meta` set/append', () => {
-      should(() => Multipart.toJSON()).throw(TypeError);
-
-      const form = new Multipart();
-      should(form.toJSON()).be.Null();
-      form.set('meta', JSON.stringify({})).data.should.be.length(14);
-      form.has('meta').should.be.True();
-      form.get('meta').should.be.instanceOf(Buffer).and.eql(Buffer.from('{}'));
-      form.toJSON().should.be.Object().and.eql({});
-      JSON.stringify(form).should.be.String().and.eql('{}');
-    });
-  });
-
   describe('Multipart::toString', () => {
     it('Method `toString()` should returns `[object FormData]` string', () => {
       Object.prototype.toString.call(Multipart).should.be.String().and.equal('[object FormData]');
@@ -503,21 +437,6 @@ describe('lib/multipart', () => {
       });
 
       form.set().pipe(fd);
-    });
-  });
-
-  describe('Multipart.FormData', () => {
-    it('The Multipart.FormData should be class or Function, which\'s named as `FormData`', () => {
-      should(Multipart.FormData).be.a.Function().and.have.property('name', 'FormData');
-    });
-
-    it('`[Symbol.toStringTag]` on the Multipart.FormData class/Function should returns `FormData` string', () => {
-      should(Multipart.FormData[Symbol.toStringTag]).be.String().and.eql('FormData');
-    });
-
-    it('`[Symbol.toStringTag]` on the Multipart.FormData instance should returns `FormData` string', () => {
-      const form = new Multipart.FormData();
-      should(form[Symbol.toStringTag]).be.String().and.eql('FormData');
     });
   });
 });
