@@ -65,7 +65,7 @@ class Multipart extends Readable {
        * @prop {Buffer} boundary - The boundary buffer.
        */
       boundary: {
-        value: Buffer.from((Date.now() + `${Math.random()}`.substring(2, 13)).padStart(50, '-')),
+        value: Buffer.from('-'.repeat(26) + Date.now() + `${Math.random()}`.substring(2, 13)),
         configurable: false,
         enumerable: false,
         writable: false,
