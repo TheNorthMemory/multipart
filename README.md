@@ -2,6 +2,13 @@
 
 Simple and lite of the `multipart/form-data` implementation. Split from `wechatpay-axios-plugin` project for general usages.
 
+[![release](https://img.shields.io/npm/v/@thenorthmemory/multipart)](https://github.com/TheNorthMemory/multipart/releases)
+[![vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/@thenorthmemory/multipart?label=snyk.io)](https://snyk.io/advisor/npm-package/@thenorthmemory/multipart)
+[![types](https://img.shields.io/badge/types-included-blue)](https://www.npmjs.com/package/@thenorthmemory/multipart)
+[![requirement](https://img.shields.io/node/v/@thenorthmemory/multipart)](https://www.npmjs.com/package/@thenorthmemory/multipart)
+[![downloads](https://img.shields.io/npm/dm/@thenorthmemory/multipart)](https://www.npmjs.com/package/@thenorthmemory/multipart)
+[![license](https://img.shields.io/npm/l/@thenorthmemory/multipart)](https://www.npmjs.com/package/@thenorthmemory/multipart)
+
 ## Usage
 
 `npm i @thenorthmemory/multipart`
